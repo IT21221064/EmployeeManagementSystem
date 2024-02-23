@@ -21,7 +21,7 @@ namespace EmployeeManagementAPI.Controllers
         {
             string query = @"select EmployeeId, FirstName, LastName, Address,MobileNumber,Email,
             convert(varchar(10),Birthday,120) as Birthday,
-            convert(varchar(10),DateOfJoining,120) as DateOfJoinning,Department 
+            convert(varchar(10),DateOfJoining,120) as DateOfJoining,Department 
             from dbo.Employee  
             ORDER BY DateOfJoining";
             DataTable table = new DataTable();
@@ -90,19 +90,19 @@ namespace EmployeeManagementAPI.Controllers
             return new JsonResult("Added Successfully");
         }
 
-        [HttpPut]
-        public JsonResult Put(Employee emp)
+        [HttpPut("/{id}")]
+        public JsonResult Put(int id, Employee emp)
         {
             string query = @"UPDATE dbo.Employee
-                    SET FirstName = @FirstName,
-                        LastName = @LastName,
-                        Address = @Address,
-                        MobileNumber = @MobileNumber,
-                        Email = @Email,
-                        Birthday = @Birthday,
-                        DateOfJoining = @DateOfJoining,
-                        Department = @Department
-                    WHERE EmployeeId = @EmployeeId";
+            SET FirstName = @FirstName,
+                LastName = @LastName,
+                Address = @Address,
+                MobileNumber = @MobileNumber,
+                Email = @Email,
+                Birthday = @Birthday,
+                DateOfJoining = @DateOfJoining,
+                Department = @Department
+            WHERE EmployeeId = @EmployeeId";
 
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("DefaultConnection");
@@ -114,7 +114,7 @@ namespace EmployeeManagementAPI.Controllers
 
                 using (SqlCommand myCommand = new SqlCommand(query, myCon))
                 {
-                    myCommand.Parameters.AddWithValue("@EmployeeId", emp.EmployeeId);
+                    myCommand.Parameters.AddWithValue("@EmployeeId", id);
                     myCommand.Parameters.AddWithValue("@FirstName", emp.FirstName);
                     myCommand.Parameters.AddWithValue("@LastName", emp.LastName);
                     myCommand.Parameters.AddWithValue("@Address", emp.Address);
@@ -131,13 +131,14 @@ namespace EmployeeManagementAPI.Controllers
                 }
             }
             return new JsonResult("Updated Successfully");
-
         }
 
-        [HttpDelete]
-        public JsonResult Delete(Employee emp) {
+
+        [HttpDelete("employee/{id}")] // Specify the route parameter for the employee ID
+        public JsonResult Delete(int id)
+        { // Change the parameter to int id
             string query = @"delete from dbo.Employee
-                            Where EmployeeId = @EmployeeId ";
+                    Where EmployeeId = @EmployeeId ";
 
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("DefaultConnection");
@@ -147,7 +148,7 @@ namespace EmployeeManagementAPI.Controllers
                 myCon.Open();
                 using (SqlCommand myCommand = new SqlCommand(query, myCon))
                 {
-                    myCommand.Parameters.AddWithValue("@EmployeeId", emp.EmployeeId);
+                    myCommand.Parameters.AddWithValue("@EmployeeId", id); // Use the id parameter
                     myReader = myCommand.ExecuteReader();
                     table.Load(myReader);
                     myReader.Close();
@@ -155,6 +156,42 @@ namespace EmployeeManagementAPI.Controllers
                 }
             }
             return new JsonResult("Deleted Successfully");
+        }
+
+        [HttpGet("{id}")]
+        public JsonResult Get(int id)
+        {
+            string query = @"SELECT EmployeeId, FirstName, LastName, Address, MobileNumber, Email,
+                         CONVERT(varchar(10), Birthday, 120) AS Birthday,
+                         CONVERT(varchar(10), DateOfJoining, 120) AS DateOfJoining, Department 
+                    FROM dbo.Employee  
+                   WHERE EmployeeId = @EmployeeId";
+
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("DefaultConnection");
+
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@EmployeeId", id);
+
+                    try
+                    {
+                        myCon.Open();
+                        SqlDataReader myReader = myCommand.ExecuteReader();
+                        table.Load(myReader);
+                        myReader.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Handle exception, log error, etc.
+                        Console.WriteLine("Error: " + ex.Message);
+                    }
+                }
+            }
+
+            return new JsonResult(table);
         }
 
 
