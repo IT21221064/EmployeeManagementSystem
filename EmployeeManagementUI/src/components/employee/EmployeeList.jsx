@@ -92,7 +92,7 @@ const EmployeeList = () => {
                       onClick={() => handleDelete(emp.EmployeeId)}
                       className="btn btn-danger"
                     >
-                      Delete Employe
+                      Delete
                     </button>
                   </td>
                 </tr>
