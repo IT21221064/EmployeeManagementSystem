@@ -51,7 +51,7 @@ namespace EmployeeManagementAPI.Controllers
 
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("DefaultConnection");
-
+            SqlDataReader myReader;
             using (SqlConnection myCon = new SqlConnection(sqlDataSource))
             {
                 myCon.Open();
@@ -81,17 +81,80 @@ namespace EmployeeManagementAPI.Controllers
                     myCommand.Parameters.AddWithValue("@DateOfJoining", emp.DateOfJoining);
                     myCommand.Parameters.AddWithValue("@Department", emp.Department);
 
-                    int rowsAffected = myCommand.ExecuteNonQuery();
-                    if (rowsAffected > 0)
-                    {
-                        return new JsonResult("Added Successfully");
-                    }
-                    else
-                    {
-                        return new JsonResult("Failed to add employee");
-                    }
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
                 }
             }
+            return new JsonResult("Added Successfully");
+        }
+
+        [HttpPut]
+        public JsonResult Put(Employee emp)
+        {
+            string query = @"UPDATE dbo.Employee
+                    SET FirstName = @FirstName,
+                        LastName = @LastName,
+                        Address = @Address,
+                        MobileNumber = @MobileNumber,
+                        Email = @Email,
+                        Birthday = @Birthday,
+                        DateOfJoining = @DateOfJoining,
+                        Department = @Department
+                    WHERE EmployeeId = @EmployeeId";
+
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("DefaultConnection");
+            SqlDataReader myReader;
+
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@EmployeeId", emp.EmployeeId);
+                    myCommand.Parameters.AddWithValue("@FirstName", emp.FirstName);
+                    myCommand.Parameters.AddWithValue("@LastName", emp.LastName);
+                    myCommand.Parameters.AddWithValue("@Address", emp.Address);
+                    myCommand.Parameters.AddWithValue("@MobileNumber", emp.MobileNumber);
+                    myCommand.Parameters.AddWithValue("@Email", emp.Email);
+                    myCommand.Parameters.AddWithValue("@Birthday", emp.Birthday);
+                    myCommand.Parameters.AddWithValue("@DateOfJoining", emp.DateOfJoining);
+                    myCommand.Parameters.AddWithValue("@Department", emp.Department);
+
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+            return new JsonResult("Updated Successfully");
+
+        }
+
+        [HttpDelete]
+        public JsonResult Delete(Employee emp) {
+            string query = @"delete from dbo.Employee
+                            Where EmployeeId = @EmployeeId ";
+
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("DefaultConnection");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@EmployeeId", emp.EmployeeId);
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+            return new JsonResult("Deleted Successfully");
         }
 
 
