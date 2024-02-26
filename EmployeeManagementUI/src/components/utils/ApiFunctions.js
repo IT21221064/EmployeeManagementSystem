@@ -60,11 +60,7 @@ export async function updateEmployee(employee) {
   try {
     const response = await api.put(`employee/${employee.EmployeeId}`, employee);
 
-    if (response.status === 200) {
-      return true;
-    } else {
-      return false;
-    }
+    return response.status; // Return the HTTP status code
   } catch (error) {
     console.error("Error updating employee:", error);
     throw new Error("Error updating employee");

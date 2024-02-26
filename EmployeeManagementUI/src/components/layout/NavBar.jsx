@@ -50,29 +50,23 @@ const NavBar = () => {
                 className={`nav-link dropdown-toggle ${
                   showAccount ? "show" : ""
                 }`}
-                href="/"
+                href="#"
                 role="button"
                 onClick={handleAccountClick}
               >
                 Account
               </a>
-              <ul
-                className={`dropdown-menu dropdown-menu-end ${
-                  showAccount ? "show" : ""
-                }`}
-              >
+              <ul className={`dropdown-menu ${showAccount ? "show" : ""}`}>
                 <li>
                   <Link to={"/login"} className="dropdown-item">
                     Login
                   </Link>
                 </li>
-
                 <li>
                   <Link to={"/profile"} className="dropdown-item">
                     Profile
                   </Link>
                 </li>
-
                 <li>
                   <Link to={"/logout"} className="dropdown-item">
                     Logout
