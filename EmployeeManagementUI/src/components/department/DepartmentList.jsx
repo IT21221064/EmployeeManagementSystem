@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { getDepartments } from "../utils/ApiFunctions";
 
 const DepartmentList = () => {
@@ -18,25 +19,32 @@ const DepartmentList = () => {
   }, []);
 
   return (
-    <div>
-      <h2>Department List</h2>
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Department ID</th>
-            <th>Department Name</th>
-          </tr>
-        </thead>
-        <tbody>
-          {departments.map((department) => (
-            <tr key={department.DeptId}>
-              <td>{department.DeptId}</td>
-              <td>{department.DeptName}</td>
+    <>
+      <div className="container col-md-8 col-lg-6">
+        <h2 className="mt-5 mb-5">Department List</h2>
+      </div>
+      <section className="mt-5 mb-5 container">
+        <table className="table table-bordered table-hover">
+          <thead>
+            <tr className="text-center">
+              <th>Department ID</th>
+              <th>Department Name</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {departments.map((department) => (
+              <tr key={department.DeptId} className="text-center">
+                <td>{department.DeptId}</td>
+                <td>{department.DeptName}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <Link to={"/"} className="btn btn-outline-info">
+          Back
+        </Link>
+      </section>
+    </>
   );
 };
 

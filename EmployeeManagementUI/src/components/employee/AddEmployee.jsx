@@ -17,6 +17,8 @@ const AddEmployee = () => {
   const [successMessage, setsuccessMessage] = useState("");
   const [errorMessage, seterrorMessage] = useState("");
   const [departments, setDepartments] = useState([]);
+  const [errors, setErrors] = useState({});
+
   const handleInputChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
@@ -62,6 +64,7 @@ const AddEmployee = () => {
           DateOfJoining: "",
           Department: "",
         });
+        setErrors({});
         seterrorMessage("");
       } else {
         seterrorMessage("Error adding employee");
@@ -92,7 +95,7 @@ const AddEmployee = () => {
             <form onSubmit={handleSubmit}>
               <div className="mb-3">
                 <label htmlFor="firstName" className="form-label">
-                  First Name
+                  First Name <span className="text-danger">*</span>
                 </label>
                 <input
                   type="text"
@@ -106,7 +109,7 @@ const AddEmployee = () => {
               </div>
               <div className="mb-3">
                 <label htmlFor="lastName" className="form-label">
-                  Last Name
+                  Last Name <span className="text-danger">*</span>
                 </label>
                 <input
                   type="text"
@@ -120,7 +123,7 @@ const AddEmployee = () => {
               </div>
               <div className="mb-3">
                 <label htmlFor="address" className="form-label">
-                  Address
+                  Address <span className="text-danger">*</span>
                 </label>
                 <input
                   type="text"
@@ -134,7 +137,7 @@ const AddEmployee = () => {
               </div>
               <div className="mb-3">
                 <label htmlFor="mobileNumber" className="form-label">
-                  Mobile Number
+                  Mobile Number <span className="text-danger">*</span>
                 </label>
                 <input
                   type="text"
@@ -148,7 +151,7 @@ const AddEmployee = () => {
               </div>
               <div className="mb-3">
                 <label htmlFor="email" className="form-label">
-                  Email
+                  Email <span className="text-danger">*</span>
                 </label>
                 <input
                   type="email"
@@ -162,7 +165,7 @@ const AddEmployee = () => {
               </div>
               <div className="mb-3">
                 <label htmlFor="birthday" className="form-label">
-                  Birthday
+                  Birthday <span className="text-danger">*</span>
                 </label>
                 <input
                   type="date"
@@ -176,7 +179,7 @@ const AddEmployee = () => {
               </div>
               <div className="mb-3">
                 <label htmlFor="dateOfJoining" className="form-label">
-                  Date of Joining
+                  Date of Joining <span className="text-danger">*</span>
                 </label>
                 <input
                   type="date"
@@ -188,24 +191,9 @@ const AddEmployee = () => {
                   required
                 />
               </div>
-              {/* <div className="mb-3">
-                <label htmlFor="department" className="form-label">
-                  Department
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="department"
-                  name="Department"
-                  value={newEmployee.Department}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div> 
-            */}
               <div className="mb-3">
                 <label htmlFor="department" className="form-label">
-                  Department
+                  Department <span className="text-danger">*</span>
                 </label>
                 <select
                   className="form-select"

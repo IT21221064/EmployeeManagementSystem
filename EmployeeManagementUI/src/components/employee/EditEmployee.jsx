@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getEmployee, updateEmployee } from "../utils/ApiFunctions";
+import {
+  getEmployee,
+  updateEmployee,
+  getDepartments,
+} from "../utils/ApiFunctions";
 
 const EditEmployee = () => {
   const { id } = useParams();
@@ -17,6 +21,20 @@ const EditEmployee = () => {
   });
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [departments, setDepartments] = useState([]);
+
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const departmentsData = await getDepartments();
+        setDepartments(departmentsData);
+      } catch (error) {
+        console.error("Error fetching departments:", error);
+      }
+    };
+
+    fetchDepartments();
+  }, []);
 
   // Fetch employee data when component mounts
   useEffect(() => {
@@ -198,6 +216,7 @@ const EditEmployee = () => {
                   required
                 />
               </div>
+              {/*
               <div className="mb-3">
                 <label htmlFor="department" className="form-label">
                   Department
@@ -212,6 +231,28 @@ const EditEmployee = () => {
                   required
                 />
               </div>
+            */}
+              <div className="mb-3">
+                <label htmlFor="department" className="form-label">
+                  Department <span className="text-danger">*</span>
+                </label>
+                <select
+                  className="form-select"
+                  id="department"
+                  name="Department"
+                  value={employee.Department}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="">Select Department</option>
+                  {departments.map((department) => (
+                    <option key={department.DeptId} value={department.DeptName}>
+                      {department.DeptName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <button type="submit" className="btn btn-primary">
                 Update Employee
               </button>
