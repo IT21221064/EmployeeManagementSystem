@@ -1,10 +1,10 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { addEmployee } from "../utils/ApiFunctions";
+import { addEmployee, getDepartments } from "../utils/ApiFunctions";
 
 const AddEmployee = () => {
-  const [newEmpolyee, setNewEmplooyee] = useState({
+  const [newEmployee, setNewEmployee] = useState({
     FirstName: "",
     LastName: "",
     Address: "",
@@ -16,29 +16,43 @@ const AddEmployee = () => {
   });
   const [successMessage, setsuccessMessage] = useState("");
   const [errorMessage, seterrorMessage] = useState("");
+  const [departments, setDepartments] = useState([]);
   const handleInputChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-    setNewEmplooyee({ ...newEmpolyee, [name]: value });
+    setNewEmployee({ ...newEmployee, [name]: value });
   };
+
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const departmentsData = await getDepartments();
+        setDepartments(departmentsData);
+      } catch (error) {
+        console.error("Error fetching departments:", error);
+      }
+    };
+
+    fetchDepartments();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const success = await addEmployee(
-        newEmpolyee.FirstName,
-        newEmpolyee.LastName,
-        newEmpolyee.Address,
-        newEmpolyee.MobileNumber,
-        newEmpolyee.Email,
-        newEmpolyee.Birthday,
-        newEmpolyee.DateOfJoining,
-        newEmpolyee.Department
+        newEmployee.FirstName,
+        newEmployee.LastName,
+        newEmployee.Address,
+        newEmployee.MobileNumber,
+        newEmployee.Email,
+        newEmployee.Birthday,
+        newEmployee.DateOfJoining,
+        newEmployee.Department
       );
 
       if (success !== undefined) {
         setsuccessMessage("A new employee was added to the database");
-        setNewEmplooyee({
+        setNewEmployee({
           FirstName: "",
           LastName: "",
           Address: "",
@@ -85,7 +99,7 @@ const AddEmployee = () => {
                   className="form-control"
                   id="firstName"
                   name="FirstName"
-                  value={newEmpolyee.FirstName}
+                  value={newEmployee.FirstName}
                   onChange={handleInputChange}
                   required
                 />
@@ -99,7 +113,7 @@ const AddEmployee = () => {
                   className="form-control"
                   id="lastName"
                   name="LastName"
-                  value={newEmpolyee.LastName}
+                  value={newEmployee.LastName}
                   onChange={handleInputChange}
                   required
                 />
@@ -113,7 +127,7 @@ const AddEmployee = () => {
                   className="form-control"
                   id="address"
                   name="Address"
-                  value={newEmpolyee.Address}
+                  value={newEmployee.Address}
                   onChange={handleInputChange}
                   required
                 />
@@ -127,7 +141,7 @@ const AddEmployee = () => {
                   className="form-control"
                   id="mobileNumber"
                   name="MobileNumber"
-                  value={newEmpolyee.MobileNumber}
+                  value={newEmployee.MobileNumber}
                   onChange={handleInputChange}
                   required
                 />
@@ -141,7 +155,7 @@ const AddEmployee = () => {
                   className="form-control"
                   id="email"
                   name="Email"
-                  value={newEmpolyee.Email}
+                  value={newEmployee.Email}
                   onChange={handleInputChange}
                   required
                 />
@@ -155,7 +169,7 @@ const AddEmployee = () => {
                   className="form-control"
                   id="birthday"
                   name="Birthday"
-                  value={newEmpolyee.Birthday}
+                  value={newEmployee.Birthday}
                   onChange={handleInputChange}
                   required
                 />
@@ -169,12 +183,12 @@ const AddEmployee = () => {
                   className="form-control"
                   id="dateOfJoining"
                   name="DateOfJoining"
-                  value={newEmpolyee.DateOfJoining}
+                  value={newEmployee.DateOfJoining}
                   onChange={handleInputChange}
                   required
                 />
               </div>
-              <div className="mb-3">
+              {/* <div className="mb-3">
                 <label htmlFor="department" className="form-label">
                   Department
                 </label>
@@ -183,11 +197,33 @@ const AddEmployee = () => {
                   className="form-control"
                   id="department"
                   name="Department"
-                  value={newEmpolyee.Department}
+                  value={newEmployee.Department}
                   onChange={handleInputChange}
                   required
                 />
+              </div> 
+            */}
+              <div className="mb-3">
+                <label htmlFor="department" className="form-label">
+                  Department
+                </label>
+                <select
+                  className="form-select"
+                  id="department"
+                  name="Department"
+                  value={newEmployee.Department}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="">Select Department</option>
+                  {departments.map((department) => (
+                    <option key={department.DeptId} value={department.DeptName}>
+                      {department.DeptName}
+                    </option>
+                  ))}
+                </select>
               </div>
+
               <button type="submit" className="btn btn-primary">
                 Add Employee
               </button>
