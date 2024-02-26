@@ -90,8 +90,8 @@ namespace EmployeeManagementAPI.Controllers
             return new JsonResult("Added Successfully");
         }
 
-        [HttpPut("/{id}")]
-        public JsonResult Put(int id, Employee emp)
+        [HttpPut("{id}")]
+        public JsonResult Put(int id, [FromBody] Employee emp)
         {
             string query = @"UPDATE dbo.Employee
             SET FirstName = @FirstName,
@@ -134,29 +134,45 @@ namespace EmployeeManagementAPI.Controllers
         }
 
 
-        [HttpDelete("employee/{id}")] // Specify the route parameter for the employee ID
+        [HttpDelete("{id}")] // Specify the route parameter for the employee ID
         public JsonResult Delete(int id)
-        { // Change the parameter to int id
-            string query = @"delete from dbo.Employee
-                    Where EmployeeId = @EmployeeId ";
+        {
+            string query = @"DELETE FROM dbo.Employee
+                    WHERE EmployeeId = @EmployeeId";
 
-            DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("DefaultConnection");
-            SqlDataReader myReader;
-            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+
+            try
             {
-                myCon.Open();
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                using (SqlConnection myCon = new SqlConnection(sqlDataSource))
                 {
-                    myCommand.Parameters.AddWithValue("@EmployeeId", id); // Use the id parameter
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                    myCon.Close();
+                    using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                    {
+                        myCommand.Parameters.AddWithValue("@EmployeeId", id); // Use the id parameter
+
+                        myCon.Open();
+                        int rowsAffected = myCommand.ExecuteNonQuery(); // Execute the delete command
+                        myCon.Close();
+
+                        if (rowsAffected > 0)
+                        {
+                            return new JsonResult("Deleted Successfully");
+                        }
+                        else
+                        {
+                            return new JsonResult("Employee with ID " + id + " not found");
+                        }
+                    }
                 }
             }
-            return new JsonResult("Deleted Successfully");
+            catch (Exception ex)
+            {
+                // Log the error or return an error message
+                Console.WriteLine("Error deleting employee: " + ex.Message);
+                return new JsonResult("Error deleting employee: " + ex.Message);
+            }
         }
+
 
         [HttpGet("{id}")]
         public JsonResult Get(int id)
