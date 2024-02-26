@@ -45,7 +45,7 @@ const AddEmployee = () => {
           MobileNumber: "",
           Email: "",
           Birthday: "",
-          DateOfJoinning: "",
+          DateOfJoining: "",
           Department: "",
         });
         seterrorMessage("");

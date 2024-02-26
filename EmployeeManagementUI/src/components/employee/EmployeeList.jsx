@@ -2,15 +2,29 @@ import React, { useEffect, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { deleteEmployee, getEmployees } from "../utils/ApiFunctions";
-
+import EmployeePaginator from "../common/EmployeePaginator";
 const EmployeeList = () => {
   const [employees, setEmployees] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [filteredEmployees, setFilteredEmployees] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [employeesPerPage] = useState(2);
 
   useEffect(() => {
     fetchEmployees();
   }, []);
+
+  useEffect(() => {
+    // Update filtered employees based on current page
+    const indexOfLastEmployee = currentPage * employeesPerPage;
+    const indexOfFirstEmployee = indexOfLastEmployee - employeesPerPage;
+    const currentEmployees = employees.slice(
+      indexOfFirstEmployee,
+      indexOfLastEmployee
+    );
+    setFilteredEmployees(currentEmployees);
+  }, [currentPage, employees, employeesPerPage]);
 
   const fetchEmployees = async () => {
     setIsLoading(true);
@@ -21,6 +35,14 @@ const EmployeeList = () => {
     } catch (error) {
       setErrorMessage(error.message);
     }
+  };
+
+  const handlePaginationClick = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const calculateTotalPages = () => {
+    return Math.ceil(employees.length / employeesPerPage);
   };
 
   const handleDelete = async (employeeId) => {
@@ -48,14 +70,19 @@ const EmployeeList = () => {
         <p>Loading existing employees...</p>
       ) : (
         <section className="mt-5 mb-5 container">
-          <div className="d-flex justify-content-between mb-3 mt-5">
+          <div className="d-flex justify-content-between mb-5 mt-5">
             <h2>Existing Employees</h2>
           </div>
           <Row>
-            <Col md={6} className="d-flex justify-content-end">
-              <Link to={"/add-emp"}>Add Employee</Link>
+            <Col md={15} className="d-flex justify-content-end">
+              <div className="ms-auto">
+                <Link to={"/add-emp"} className="btn btn-primary">
+                  Add Employee
+                </Link>
+              </div>
             </Col>
           </Row>
+          <br />
 
           <table className="table table-bordered table-hover">
             <thead>
@@ -73,7 +100,7 @@ const EmployeeList = () => {
               </tr>
             </thead>
             <tbody>
-              {employees.map((emp) => (
+              {filteredEmployees.map((emp) => (
                 <tr key={emp.EmployeeId} className="text-center">
                   <td>{emp.EmployeeId}</td>
                   <td>{emp.FirstName}</td>
@@ -99,6 +126,11 @@ const EmployeeList = () => {
               ))}
             </tbody>
           </table>
+          <EmployeePaginator
+            currentPage={currentPage}
+            totalPages={calculateTotalPages()}
+            onPageChange={handlePaginationClick}
+          />
         </section>
       )}
     </>
