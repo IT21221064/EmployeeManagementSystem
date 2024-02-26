@@ -3,6 +3,8 @@ import { Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { deleteEmployee, getEmployees } from "../utils/ApiFunctions";
 import EmployeePaginator from "../common/EmployeePaginator";
+import toastr from "toastr";
+
 const EmployeeList = () => {
   const [employees, setEmployees] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -50,6 +52,7 @@ const EmployeeList = () => {
       const success = await deleteEmployee(employeeId);
       if (success) {
         setEmployees(employees.filter((emp) => emp.EmployeeId !== employeeId));
+        toastr.success("Employee deleted successfully!");
       } else {
         setErrorMessage("Failed to delete employee");
       }

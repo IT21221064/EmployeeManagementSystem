@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { addEmployee, getDepartments } from "../utils/ApiFunctions";
+import toastr from "toastr";
 
 const AddEmployee = () => {
   const [newEmployee, setNewEmployee] = useState({
@@ -66,6 +67,7 @@ const AddEmployee = () => {
         });
         setErrors({});
         seterrorMessage("");
+        toastr.success("Employee added successfully!");
       } else {
         seterrorMessage("Error adding employee");
       }

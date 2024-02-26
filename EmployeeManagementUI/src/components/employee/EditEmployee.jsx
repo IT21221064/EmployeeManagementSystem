@@ -5,6 +5,7 @@ import {
   updateEmployee,
   getDepartments,
 } from "../utils/ApiFunctions";
+import toastr from "toastr";
 
 const EditEmployee = () => {
   const { id } = useParams();
@@ -80,6 +81,7 @@ const EditEmployee = () => {
       const success = await updateEmployee(employee);
       if (success) {
         setSuccessMessage("Employee updated successfully");
+        toastr.success("Employee updated successfully!");
       } else {
         setErrorMessage("Failed to update employee");
       }
