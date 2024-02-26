@@ -13,9 +13,9 @@ namespace EmployeeManagementAPI.Models
         public string? Email { get; set; }
         public string? Birthday { get; set; }
         public string? DateOfJoining { get; set; }
-        public string? Department { get; set; } // Collection of departments
+        public string? Department { get; set; } 
+       // public List<string>? Departments { get; set; }
 
-        // Constructor for setting default values
     }
 
 }
